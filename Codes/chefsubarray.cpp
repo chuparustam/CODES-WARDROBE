@@ -1,0 +1,129 @@
+#include <bits/stdc++.h>
+using namespace std;
+int N,K,P,i,k,A[100000],B[100000],Li,Lm=0,Lm2=0,j=0,ctr=0,flag=0,shf;
+char ch,chP[100000];
+void result(int ans)
+{
+  if(ans>K)
+  cout<<K;
+  else
+  cout<<ans;
+  cout<<"\n";
+}
+void solve(int idx)
+{
+  shf=0;
+  for(k=idx;k<P;k++)
+  {
+    cin>>chP[k];
+    if(chP[k]=='!')
+    {
+      shf++;
+      if(shf>=N-1-Li+Lm)
+      {  
+        Li=Lm-1;
+        shf=0;
+      }  
+    }
+    else
+    {
+      if(shf<=N-1-Li)
+      result(Lm);
+      else if(shf>N-1-Li&&shf<N-1-Li+Lm)
+      result(max(Lm-shf+N-1-Li,max(shf-N+1+Li,Lm2)));
+      else
+      result(Lm);
+    }    
+  }
+}
+int main()
+{
+    cin>>N>>K>>P;
+    for(i=0;i<N;i++)
+    cin>>A[i];
+    cin>>chP;
+    for(i=0;i<N;i++)
+    {
+    	if(A[i]==0)
+    	{	
+        if(ctr)
+        {
+          B[j++]=ctr;
+          if(ctr>Lm)
+          Li=i-1;
+          Lm=max(Lm,ctr);
+        }
+        ctr=0;
+      }
+      else
+      ctr++;	
+    }
+    if(ctr)
+    {
+    	B[j++]=ctr;
+      if(ctr>Lm)
+      Li=i-1;
+    	Lm=max(Lm,ctr);
+    	ctr=0;
+    }
+    ctr=0;	
+    for(i=0;i<j;i++)
+    {  
+      if(B[i]==Lm)  
+      ctr++;
+      if(B[i]<Lm)
+      {
+          if(B[i]>Lm2)
+          Lm2=B[i];  
+      }  
+    } 
+    if(ctr>1)
+    flag=1;
+    
+    if(flag)  
+    {  
+      for(k=0;k<P;k++)
+      {
+    	  cin>>chP[k];
+        if(chP[k]=='!')
+        result(Lm); 
+      }
+    }
+    else
+    {
+      if(A[0]==1&&A[N-1]==1)
+      {
+        if(B[0]+B[j-1]>Lm)
+        {
+           shf=0;
+           for(k=0;k<P;k++)
+           {
+              cin>>chP[k];
+              if(chP[k]=='!')
+              {
+                 shf++;
+                 if(shf==B[j-1])
+                {
+                   Lm=B[0]+B[j-1];
+                   Li=Lm-1;
+                   shf=0;
+                   break;
+                }
+              } 
+              else
+              {
+                if(shf<B[j-1])
+                result(max(B[0]+shf,Lm));
+              }  
+           }
+           if(P) 
+           solve(k+1);     
+        }
+        else
+        solve(0); 
+      }
+      else
+      solve(0);    
+    }   
+	return 0;
+}
